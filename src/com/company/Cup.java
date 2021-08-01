@@ -18,4 +18,8 @@ public class Cup {
             die.roll();
         }
     }
+
+    public void removeDie() {
+        dice.remove(0);
+    }
 }

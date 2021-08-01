@@ -1,13 +1,16 @@
 package com.company;
 
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-    Player activePlayer;
-    int diceTotal;
-    int currentValueBid;
-    int currentQuantity;
+    public Player activePlayer;
+    public int diceTotal;
+    public int currentValueBid;
+    public int currentQuantity;
+    public HashMap<Integer, Integer> tableDice = new HashMap<>();
     private final Scanner scanner = new Scanner(System.in);
 
     public Game() {
@@ -22,9 +25,22 @@ public class Game {
 
     public void round() {
         activePlayer.cup.rollDice();
+
+        for (Die die : activePlayer.cup.dice) {
+            if (tableDice.containsKey(die.faceUpValue)) {
+                int count = tableDice.get(die.faceUpValue);
+                count ++;
+                tableDice.put(die.faceUpValue, count);
+            } else {
+                tableDice.put(die.faceUpValue, 1);
+            }
+        }
+
         displayDice();
         initialBid();
+        callLiar();
         secondBid();
+        callLiar();
     }
 
     private void displayDice() {
@@ -104,5 +120,37 @@ public class Game {
 
         }
 
+    }
+
+    public void callLiar() {
+        System.out.println(tableDice);
+        System.out.println("Is the current bid, " + currentQuantity + " dice of " + currentValueBid + " value, a " +
+                "lie?\n(y)es\n(n)o");
+
+        System.out.println();
+        String choice = scanner.nextLine();
+
+        switch (choice.toLowerCase(Locale.ROOT)) {
+            case "y" :
+                System.out.println(activePlayer.name + " thinks the last bet is a lie...");
+
+                if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) <= currentQuantity) {
+                    System.out.println("The last bid is not a lie! " + activePlayer.name + " loses a die!");
+                    activePlayer.cup.removeDie();
+                } else {
+                    System.out.println("The current bid is a lie!");
+                }
+
+                break;
+
+            case "n" :
+                System.out.println(activePlayer.name + " thinks the current bid is not a lie.");
+
+                break;
+
+            default:
+                System.out.println("Invalid selection, try again!");
+                callLiar();
+        }
     }
 }
