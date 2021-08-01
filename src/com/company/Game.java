@@ -134,7 +134,7 @@ public class Game {
             case "y" :
                 System.out.println(activePlayer.name + " thinks the last bet is a lie...");
 
-                if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) <= currentQuantity) {
+                if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) >= currentQuantity) {
                     System.out.println("The last bid is not a lie! " + activePlayer.name + " loses a die!");
                     activePlayer.cup.removeDie();
                 } else {
