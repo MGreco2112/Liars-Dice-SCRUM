@@ -29,7 +29,7 @@ public class Game {
         for (Die die : activePlayer.cup.dice) {
             if (tableDice.containsKey(die.faceUpValue)) {
                 int count = tableDice.get(die.faceUpValue);
-                count ++;
+                count++;
                 tableDice.put(die.faceUpValue, count);
             } else {
                 tableDice.put(die.faceUpValue, 1);
@@ -123,7 +123,7 @@ public class Game {
     }
 
     public void callLiar() {
-        System.out.println(tableDice);
+//        System.out.println(tableDice);
         System.out.println("Is the current bid, " + currentQuantity + " dice of " + currentValueBid + " value, a " +
                 "lie?\n(y)es\n(n)o");
 
