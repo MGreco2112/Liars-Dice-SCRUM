@@ -3,8 +3,8 @@ package com.company;
 import java.util.Random;
 
 public class Die {
-    int numberOfSides;
-    int faceUpValue = 0;
+    public int numberOfSides;
+    public int faceUpValue = 0;
 
     public Die(int numberOfSides) {
         this.numberOfSides = numberOfSides;

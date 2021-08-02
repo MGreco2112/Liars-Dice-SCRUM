@@ -3,7 +3,7 @@ package com.company;
 import java.util.ArrayList;
 
 public class Cup {
-    ArrayList<Die> dice = new ArrayList<>();
+    public ArrayList<Die> dice = new ArrayList<>();
 
 
     public void addDice(int numberOfDice) {

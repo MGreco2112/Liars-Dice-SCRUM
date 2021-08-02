@@ -7,6 +7,9 @@ import java.util.Scanner;
 public class Main {
 
     /*
+
+    Thursday:
+
      1) single player can roll dice,
         look at dice
 
@@ -14,6 +17,12 @@ public class Main {
         ask for another bid if invalid bid given
 
      3) [Liar System]
+
+   Monday:
+
+     1) Finish weekend goals and stretch goals
+
+     2) Refactor code into separate classes
      */
 
     public static void main(String[] args) {
