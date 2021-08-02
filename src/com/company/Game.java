@@ -68,6 +68,7 @@ public class Game {
         int newQuantity;
         String choice = "";
 
+
         if (currentValueBid != 6) {
 
             System.out.println(activePlayer.name + ", make your second bid. You may either:\n1) Increase the die value from the last " +
@@ -127,7 +128,7 @@ public class Game {
         System.out.println("Is the current bid, " + currentQuantity + " dice of " + currentValueBid + " value, a " +
                 "lie?\n(y)es\n(n)o");
 
-        System.out.println();
+        scanner.nextLine();
         String choice = scanner.nextLine();
 
         switch (choice.toLowerCase(Locale.ROOT)) {
