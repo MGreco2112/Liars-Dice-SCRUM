@@ -1,16 +1,16 @@
 package com.company;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     public Player activePlayer;
+    public Player lastPlayer;
+    public int numberOfPlayers;
     public int diceTotal;
-    public int currentValueBid;
-    public int currentQuantity;
-    public HashMap<Integer, Integer> tableDice = new HashMap<>();
+    public int currentValueBid = 0;
+    public int currentQuantity = 0;
+    public HashMap<Integer, Integer> tableDice;
+    public ArrayList<Player> players = new ArrayList<>();
     private final Scanner scanner = new Scanner(System.in);
 
     public Game() {
@@ -19,15 +19,20 @@ public class Game {
 
     public void round() {
 
-        System.out.println("Enter your name:");
-        String name = scanner.nextLine();
-        System.out.println("How many dice would you like to roll with?");
-        diceTotal = scanner.nextInt();
+        playerSetup();
 
-        activePlayer = new Player(name);
-        activePlayer.cup.addDice(diceTotal);
+        for (Player player : players) {
 
-        while (activePlayer.cup.dice.size() > 0) {
+            activePlayer = player;
+
+            activePlayer.cup.addDice(diceTotal);
+
+//        while (activePlayer.cup.dice.size() > 0) {
+
+            if (currentValueBid == 0) {
+                tableDice = new HashMap<>();
+            }
+
 
             activePlayer.cup.rollDice();
 
@@ -42,22 +47,63 @@ public class Game {
             }
 
             displayDice();
-            initialBid();
-            callLiar();
-            secondBid();
-            callLiar();
+
+            if (currentValueBid == 0) {
+                initialBid();
+            } else {
+                System.out.println(activePlayer.name + ", would you like to make a new bet or call the last bet a " +
+                        "lie?\n1) New Bet\n2) Call Lie\nCurrent bet: " + currentQuantity + " instances of " + currentValueBid);
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        secondBid();
+                        break;
+
+                    case 2:
+                    callLiar();
+                    break;
+                }
+            }
+
+            lastPlayer = player;
+
+//        }
         }
 
         gameOver();
 
     }
 
+    public void playerSetup() {
+        System.out.println("How many Players will there be?");
+        String playerNumber = scanner.nextLine();
+        numberOfPlayers = Integer.parseInt(playerNumber);
+        System.out.println("How many dice would you like to roll with?");
+//        diceTotal = scanner.nextInt();
+        String dice = scanner.nextLine();
+        diceTotal = Integer.parseInt(dice);
+
+        while (players.size() < numberOfPlayers) {
+
+            System.out.println("Enter your name:");
+            String name = scanner.nextLine();
+
+            players.add(new Player(name));
+        }
+
+    }
+
     private void displayDice() {
         System.out.println(activePlayer.name + " rolls their dice!");
 
+        String output = "";
+
         for (Die die : activePlayer.cup.dice) {
-            System.out.println(die.faceUpValue);
+            output += die.faceUpValue + " ";
         }
+
+        System.out.println(output.trim());
     }
 
     private void initialBid() {
@@ -75,26 +121,27 @@ public class Game {
     public void secondBid() {
         int newBidValue;
         int newQuantity;
-        String choice = "";
+        int choice;
 
 
-        if (currentValueBid != 6) {
+        if (currentValueBid == 6) {
 
-            System.out.println(activePlayer.name + ", make your second bid. You may either:\n1) Increase the die value from the last " +
-                    "bid\n2) Bid any value of dice at an increased quantity");
-                scanner.nextLine();
-                choice = scanner.nextLine();
-        } else {
             System.out.println(activePlayer.name + ", since the current bid value is 6, you may only increase the " +
                     "quantity and bid any value");
-            choice = "2";
+            choice = 2;
+        } else {
+            System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the die " +
+                    "value from the last " +
+                    "bid\n2) Bid any value of dice at an increased quantity");
+
+            choice = scanner.nextInt();
         }
 
 
 
 
         switch (choice) {
-            case "1" :
+            case 1 :
                 System.out.println("The last bid was a value of " + currentValueBid + ", that occurred " + currentQuantity +
                         " times");
 
@@ -108,7 +155,7 @@ public class Game {
                 currentValueBid = newBidValue;
                 break;
 
-            case "2" :
+            case 2 :
                 do {
                     System.out.println("Which quantity of dice do you wish to bid? This value must be higher than " + currentQuantity);
                     newQuantity = scanner.nextInt();
@@ -133,39 +180,37 @@ public class Game {
     }
 
     public void callLiar() {
-//        System.out.println(tableDice);
-        System.out.println("Is the current bid, " + currentQuantity + " dice of " + currentValueBid + " value, a " +
-                "lie?\n(y)es\n(n)o");
 
-        scanner.nextLine();
-        String choice = scanner.nextLine();
+        System.out.println(activePlayer.name + " thinks the last bet is a lie...");
 
-        switch (choice.toLowerCase(Locale.ROOT)) {
-            case "y" :
-                System.out.println(activePlayer.name + " thinks the last bet is a lie...");
-
-                if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) >= currentQuantity) {
-                    System.out.println("The last bid is not a lie! " + activePlayer.name + " loses a die!");
-                    activePlayer.cup.removeDie();
-                } else {
-                    System.out.println("The current bid is a lie!");
-                }
-
-                break;
-
-            case "n" :
-                System.out.println(activePlayer.name + " thinks the current bid is not a lie.");
-
-                break;
-
-            default:
-                System.out.println("Invalid selection, try again!");
-                callLiar();
+        if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) >= currentQuantity) {
+            System.out.println("The last bid is not a lie! " + activePlayer.name + " loses a die!");
+            activePlayer.cup.removeDie();
+        } else {
+            System.out.println("The current bid is a lie! " + lastPlayer.name + " loses a die!");
+            lastPlayer.cup.removeDie();
         }
+
+
+
+        currentValueBid = 0;
+        currentQuantity = 0;
     }
 
     private void gameOver() {
+        if (players.get(0).cup.dice.size() == players.get(1).cup.dice.size()) {
+            System.out.println("The game is a tie!");
+        } else {
+            System.out.println(players.get(0).cup.dice.size() > players.get(1).cup.dice.size() ? players.get(0).name +
+                    " " +
+                    "is" +
+                    " " +
+                    "the " +
+                    "winner!" : players.get(1).name + " is the winner!");
+        }
+
         System.out.println("Game Over\nPlay Again?\n(y)es\n(n)o");
+        scanner.nextLine();
 
         String choice = scanner.nextLine();
 
