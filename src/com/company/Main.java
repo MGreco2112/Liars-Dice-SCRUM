@@ -29,7 +29,6 @@ public class Main {
 
         Game testGame = new Game();
 
-        testGame.round();
 
 
 

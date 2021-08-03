@@ -14,6 +14,11 @@ public class Game {
     private final Scanner scanner = new Scanner(System.in);
 
     public Game() {
+        round();
+    }
+
+    public void round() {
+
         System.out.println("Enter your name:");
         String name = scanner.nextLine();
         System.out.println("How many dice would you like to roll with?");
@@ -21,26 +26,30 @@ public class Game {
 
         activePlayer = new Player(name);
         activePlayer.cup.addDice(diceTotal);
-    }
 
-    public void round() {
-        activePlayer.cup.rollDice();
+        while (activePlayer.cup.dice.size() > 0) {
 
-        for (Die die : activePlayer.cup.dice) {
-            if (tableDice.containsKey(die.faceUpValue)) {
-                int count = tableDice.get(die.faceUpValue);
-                count++;
-                tableDice.put(die.faceUpValue, count);
-            } else {
-                tableDice.put(die.faceUpValue, 1);
+            activePlayer.cup.rollDice();
+
+            for (Die die : activePlayer.cup.dice) {
+                if (tableDice.containsKey(die.faceUpValue)) {
+                    int count = tableDice.get(die.faceUpValue);
+                    count++;
+                    tableDice.put(die.faceUpValue, count);
+                } else {
+                    tableDice.put(die.faceUpValue, 1);
+                }
             }
+
+            displayDice();
+            initialBid();
+            callLiar();
+            secondBid();
+            callLiar();
         }
 
-        displayDice();
-        initialBid();
-        callLiar();
-        secondBid();
-        callLiar();
+        gameOver();
+
     }
 
     private void displayDice() {
@@ -152,6 +161,27 @@ public class Game {
             default:
                 System.out.println("Invalid selection, try again!");
                 callLiar();
+        }
+    }
+
+    private void gameOver() {
+        System.out.println("Game Over\nPlay Again?\n(y)es\n(n)o");
+
+        String choice = scanner.nextLine();
+
+        switch (choice.toLowerCase(Locale.ROOT)) {
+            case "y" :
+                round();
+                break;
+
+            case "n" :
+                System.out.println("Thank you for playing!");
+                System.exit(0);
+                break;
+
+            default:
+                System.out.println("Invalid selection");
+                gameOver();
         }
     }
 }
