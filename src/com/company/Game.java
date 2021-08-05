@@ -127,7 +127,7 @@ public class Game {
         if (currentValueBid == 6) {
 
             System.out.println(activePlayer.name + ", since the current bid value is 6, you may only increase the " +
-                    "quantity and bid any value");
+                    "quantity of the bid can be any, but the value must stay at 6.");
             choice = 2;
         } else {
             System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the die " +
@@ -161,9 +161,15 @@ public class Game {
                     newQuantity = scanner.nextInt();
                 } while (newQuantity <= currentQuantity);
 
-                System.out.println("What die value would you like to bid? This can be of any value");
 
-                newBidValue = scanner.nextInt();
+                if (currentValueBid != 6) {
+
+                    System.out.println("What die value would you like to bid? This can be of any value");
+                    newBidValue = scanner.nextInt();
+                } else {
+                    System.out.println();
+                    newBidValue = 6;
+                }
 
 
                 System.out.println("The new bid is " + newQuantity + " instances of " + newBidValue);
