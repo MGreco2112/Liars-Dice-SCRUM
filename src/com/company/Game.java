@@ -9,6 +9,7 @@ public class Game {
     public int diceTotal;
     public int currentValueBid = 0;
     public int currentQuantity = 0;
+    public int tableDiceCount = 0;
     public HashMap<Integer, Integer> tableDice;
     public ArrayList<Player> players = new ArrayList<>();
     private final Scanner scanner = new Scanner(System.in);
@@ -21,30 +22,70 @@ public class Game {
 
         playerSetup();
 
+
+            while (players.size() > 1) {
+                turnSetup();
+
+
+                turn();
+                removePlayer();
+            }
+
+
+        gameOver();
+
+
+    }
+
+    public void playerSetup() {
+        System.out.println("How many Players will there be?");
+        String playerNumber = scanner.nextLine();
+        numberOfPlayers = Integer.parseInt(playerNumber);
+        System.out.println("How many dice would you like to roll with?");
+        String dice = scanner.nextLine();
+        diceTotal = Integer.parseInt(dice);
+
+        while (players.size() < numberOfPlayers) {
+
+            System.out.println("Enter your name:");
+            String name = scanner.nextLine();
+
+            players.add(new Player(name));
+        }
+
+        for (Player player : players) {
+            player.cup.addDice(diceTotal);
+        }
+
+    }
+
+    private void turnSetup() {
+        if (currentValueBid == 0) {
+            tableDice = new HashMap<>();
+
+            for (Player player : players) {
+                System.out.println(player.name + " rolls their dice...");
+                player.cup.rollDice();
+                for (Die die : player.cup.dice) {
+                    if (tableDice.containsKey(die.faceUpValue)) {
+                        int count = tableDice.get(die.faceUpValue);
+                        count++;
+                        tableDice.put(die.faceUpValue, count);
+                    } else {
+                        tableDice.put(die.faceUpValue, 1);
+                    }
+                    tableDiceCount++;
+                }
+            }
+        }
+
+    }
+
+    private int turn() {
+
         for (Player player : players) {
 
             activePlayer = player;
-
-            activePlayer.cup.addDice(diceTotal);
-
-//        while (activePlayer.cup.dice.size() > 0) {
-
-            if (currentValueBid == 0) {
-                tableDice = new HashMap<>();
-            }
-
-
-            activePlayer.cup.rollDice();
-
-            for (Die die : activePlayer.cup.dice) {
-                if (tableDice.containsKey(die.faceUpValue)) {
-                    int count = tableDice.get(die.faceUpValue);
-                    count++;
-                    tableDice.put(die.faceUpValue, count);
-                } else {
-                    tableDice.put(die.faceUpValue, 1);
-                }
-            }
 
             displayDice();
 
@@ -61,41 +102,22 @@ public class Game {
                         break;
 
                     case 2:
-                    callLiar();
-                    break;
+                        callLiar();
+                        return 0;
+
+                    default:
+                        System.out.println("Invalid selection");
+                        turn();
                 }
             }
-
-            lastPlayer = player;
-
-//        }
         }
 
-        gameOver();
-
-    }
-
-    public void playerSetup() {
-        System.out.println("How many Players will there be?");
-        String playerNumber = scanner.nextLine();
-        numberOfPlayers = Integer.parseInt(playerNumber);
-        System.out.println("How many dice would you like to roll with?");
-//        diceTotal = scanner.nextInt();
-        String dice = scanner.nextLine();
-        diceTotal = Integer.parseInt(dice);
-
-        while (players.size() < numberOfPlayers) {
-
-            System.out.println("Enter your name:");
-            String name = scanner.nextLine();
-
-            players.add(new Player(name));
-        }
+        return 1;
 
     }
 
     private void displayDice() {
-        System.out.println(activePlayer.name + " rolls their dice!");
+        System.out.println(activePlayer.name + " looks at their dice...");
 
         String output = "";
 
@@ -130,9 +152,9 @@ public class Game {
                     "quantity of the bid can be any, but the value must stay at 6.");
             choice = 2;
         } else {
-            System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the die " +
-                    "value from the last " +
-                    "bid\n2) Bid any value of dice at an increased quantity");
+            System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the number of dice " +
+                    "at the current value from the last " +
+                    "bid\n2) Bid an increased value of dice at any quantity");
 
             choice = scanner.nextInt();
         }
@@ -146,30 +168,33 @@ public class Game {
                         " times");
 
                 do {
-                    System.out.println("What value would you like to increase the bid die to?\nOld value: " + currentValueBid);
-                    newBidValue = scanner.nextInt();
-                } while (newBidValue <= currentValueBid);
+                    System.out.println("How many dice would you like to increase the bet value by?\nOld value: " + currentQuantity);
+                    newQuantity = scanner.nextInt();
+                } while (newQuantity < currentQuantity);
 
-                System.out.println("The new bid is " + currentQuantity + " instances of " + newBidValue);
+                System.out.println("The new bid is " + newQuantity + " instances of " + currentValueBid);
 
-                currentValueBid = newBidValue;
+                newQuantity = currentQuantity;
                 break;
 
             case 2 :
-                do {
-                    System.out.println("Which quantity of dice do you wish to bid? This value must be higher than " + currentQuantity);
-                    newQuantity = scanner.nextInt();
-                } while (newQuantity <= currentQuantity);
-
 
                 if (currentValueBid != 6) {
 
-                    System.out.println("What die value would you like to bid? This can be of any value");
-                    newBidValue = scanner.nextInt();
+                    do {
+                        System.out.println("Of what value die would you like to bid? This value must be greater than the " +
+                                "current bid value of: " + currentValueBid);
+                        newBidValue = scanner.nextInt();
+                    } while (newBidValue < currentValueBid);
                 } else {
-                    System.out.println();
+                    System.out.println("The current value bid is 6, which cannot be increased");
                     newBidValue = 6;
                 }
+
+                do {
+                    System.out.println("Which quantity of dice do you wish to bid? This value must be higher than " + currentQuantity);
+                    newQuantity = scanner.nextInt();
+                } while (newQuantity < currentQuantity);
 
 
                 System.out.println("The new bid is " + newQuantity + " instances of " + newBidValue);
@@ -187,6 +212,14 @@ public class Game {
 
     public void callLiar() {
 
+        if (activePlayer == players.get(0)) {
+            lastPlayer = players.get(players.size() - 1);
+        } else if (activePlayer == players.get(players.size() - 1)) {
+            lastPlayer = players.get(0);
+        } else {
+            lastPlayer = players.get(players.indexOf(activePlayer) - 1);
+        }
+
         System.out.println(activePlayer.name + " thinks the last bet is a lie...");
 
         if (tableDice.containsKey(currentValueBid) && tableDice.get(currentValueBid) >= currentQuantity) {
@@ -203,17 +236,17 @@ public class Game {
         currentQuantity = 0;
     }
 
-    private void gameOver() {
-        if (players.get(0).cup.dice.size() == players.get(1).cup.dice.size()) {
-            System.out.println("The game is a tie!");
-        } else {
-            System.out.println(players.get(0).cup.dice.size() > players.get(1).cup.dice.size() ? players.get(0).name +
-                    " " +
-                    "is" +
-                    " " +
-                    "the " +
-                    "winner!" : players.get(1).name + " is the winner!");
+    private void removePlayer() {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).cup.dice.size() < 1) {
+                players.remove(i);
+                i--;
+            }
         }
+    }
+
+    private void gameOver() {
+        System.out.println(players.get(0).name + " is the winner!");
 
         System.out.println("Game Over\nPlay Again?\n(y)es\n(n)o");
         scanner.nextLine();
