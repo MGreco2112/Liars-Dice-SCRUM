@@ -25,8 +25,6 @@ public class Game {
 
             while (players.size() > 1) {
                 turnSetup();
-
-
                 turn();
                 removePlayer();
             }
@@ -117,7 +115,8 @@ public class Game {
     }
 
     private void displayDice() {
-        System.out.println(activePlayer.name + " looks at their dice...");
+        System.out.println(activePlayer.name + " looks at their dice...\nThere are " + tableDiceCount + " dice in " +
+                "play.");
 
         String output = "";
 
