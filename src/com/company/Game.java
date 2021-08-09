@@ -170,11 +170,11 @@ public class Game {
                 do {
                     System.out.println("How many dice would you like to increase the bet value by?\nOld value: " + currentQuantity);
                     newQuantity = scanner.nextInt();
-                } while (newQuantity < currentQuantity);
+                } while (newQuantity <= currentQuantity);
 
                 System.out.println("The new bid is " + newQuantity + " instances of " + currentValueBid);
 
-                newQuantity = currentQuantity;
+                currentQuantity = newQuantity;
                 break;
 
             case 2 :
@@ -185,7 +185,7 @@ public class Game {
                         System.out.println("Of what value die would you like to bid? This value must be greater than the " +
                                 "current bid value of: " + currentValueBid);
                         newBidValue = scanner.nextInt();
-                    } while (newBidValue < currentValueBid);
+                    } while (newBidValue <= currentValueBid);
                 } else {
                     System.out.println("The current value bid is 6, which cannot be increased");
                     newBidValue = 6;
@@ -194,7 +194,7 @@ public class Game {
                 do {
                     System.out.println("Which quantity of dice do you wish to bid? This value must be higher than " + currentQuantity);
                     newQuantity = scanner.nextInt();
-                } while (newQuantity < currentQuantity);
+                } while (newQuantity <= currentQuantity);
 
 
                 System.out.println("The new bid is " + newQuantity + " instances of " + newBidValue);
