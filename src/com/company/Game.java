@@ -61,6 +61,7 @@ public class Game {
         if (currentValueBid == 0) {
             tableDice = new HashMap<>();
 
+            tableDiceCount = 0;
             for (Player player : players) {
                 System.out.println(player.name + " rolls their dice...");
                 player.cup.rollDice();
