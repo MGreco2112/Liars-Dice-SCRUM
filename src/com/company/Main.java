@@ -23,6 +23,12 @@ public class Main {
      1) Finish weekend goals and stretch goals
 
      2) Refactor code into separate classes
+
+
+
+    Same QTY, face value must increase
+
+    Increase QTY, any face value
      */
 
     public static void main(String[] args) {
