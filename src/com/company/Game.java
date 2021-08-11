@@ -129,16 +129,24 @@ public class Game {
     }
 
     private void initialBid() {
-        System.out.println(activePlayer.name + ", make your initial bid. This will be a Die Value...");
 
-        currentValueBid = scanner.nextInt();
+        do {
 
-        System.out.println("... and the number of times that value occurs");
+            System.out.println(activePlayer.name + ", make your initial bid. This will be a Die Value...");
 
-        currentQuantity = scanner.nextInt();
+            currentValueBid = scanner.nextInt();
+        } while (currentValueBid <= 0);
+
+        do {
+
+            System.out.println("... and the number of times that value occurs");
+
+            currentQuantity = scanner.nextInt();
+        } while (currentQuantity <= 0);
 
 
     }
+
 
     public void secondBid() {
         int newBidValue;
@@ -152,14 +160,11 @@ public class Game {
                     "quantity of the bid can be any, but the value must stay at 6.");
             choice = 2;
         } else {
-            System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the number of dice " +
-                    "at the current value from the last " +
-                    "bid\n2) Bid an increased value of dice at any quantity");
+            System.out.println(activePlayer.name + ", make your bid. You may either:\n1) Increase the quantity of " +
+                    "dice\n2) Bid an increased quantity of dice at any value");
 
             choice = scanner.nextInt();
         }
-
-
 
 
         switch (choice) {
@@ -179,22 +184,20 @@ public class Game {
 
             case 2 :
 
-                if (currentValueBid != 6) {
+                /*
+    Same QTY, face value must increase
 
-                    do {
-                        System.out.println("Of what value die would you like to bid? This value must be greater than the " +
-                                "current bid value of: " + currentValueBid);
-                        newBidValue = scanner.nextInt();
-                    } while (newBidValue <= currentValueBid);
-                } else {
-                    System.out.println("The current value bid is 6, which cannot be increased");
-                    newBidValue = 6;
-                }
+    Increase QTY, any face value
+     */
 
                 do {
                     System.out.println("Which quantity of dice do you wish to bid? This value must be higher than " + currentQuantity);
                     newQuantity = scanner.nextInt();
                 } while (newQuantity <= currentQuantity);
+
+
+                System.out.println("Of what value die would you like to bid?");
+                newBidValue = scanner.nextInt();
 
 
                 System.out.println("The new bid is " + newQuantity + " instances of " + newBidValue);
